@@ -180,27 +180,25 @@
         
         <!-- footer -->
         <div class="footer">
-            <div class="float-parent-element" style="width: 50%; ">
-              <div class="float-child-element" style="float: left;width: 100%; ">
-                  <div style="width:160px;border-top: 2px solid black;margin: 10px;margin-right:20px;">
-                      <div style="height:15px"/>
-                      <strong style="padding-left:20px;">Prepared By</strong>
-                  </div>
-                  <div style="width:160px;border-top: 2px solid black;margin: 10px;margin-right:20px;">
-                      <div style="height:15px"/>
-                      <strong style="padding-left:53px;">Checkedy By</strong>
-                  </div>
-                  <div style="width:160px;border-top: 2px solid black;margin: 10px;margin-right:20px;">
-                      <div style="height:15px"/>
-                      <strong style="padding-left:20px;">Approved By</strong>
-                  </div>
-                  <div style="width:160px;border-top: 2px solid black;margin: 10px;margin-right:20px;">
-                      <div style="height:15px"/>
-                      <strong style="padding-left:20px;">Received By</strong>
-                  </div>
-              </div>
+            <div style="width:160px;border-top: 2px solid black;margin: 10px;height:60px;">
+                <div style="height:15px"/>
+                <strong style="padding-left:30px;">Prepared By</strong>
             </div>
-          <p style="margin-left: 90%;font: weight 53px;margin-top:20px;padding-top:80px;">Page <span class="page"/>   of <span class="topage"/> </p> 
+            <div style="width:160px;border-top: 2px solid black;margin: 10px;margin-top:-70px;margin-left:220px;">
+                <div style="height:15px"/>
+                <strong style="padding-left:30px;">Checked By</strong>
+            </div>
+            <div style="width:160px;border-top: 2px solid black;margin: 10px;margin-top:-50px;margin-left:440px;">
+                <div style="height:15px"/>
+                <strong style="padding-left:30px;">Approved By</strong>
+            </div>
+            <div style="width:160px;border-top: 2px solid black;margin: 10px;margin-top:-50px;margin-left:660px;">
+                <div style="height:15px"/>
+                <strong style="padding-left:35px;">Received By</strong>
+            </div>
+            <div>
+              <p style="margin-left:800px;margin-top:15px">Page <span class="page"/>   of <span class="topage"/> </p> 
+            </div>
         </div>
         <!--- CSS  to the html -->
         <style>
