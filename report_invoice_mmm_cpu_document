@@ -1,0 +1,234 @@
+<?xml version="1.0"?>
+<template id="custom_external_layout" inherit_id="web.external_layout">
+  <t t-set="o" t-value="o.with_context(lang=lang)"/>
+  <div class="article o_report_layout_standard" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id">
+    <div class='header'>
+      <div style="width:100%;height:35px;background-color:white;"/>
+      <div >
+        <h1 style="font-family: 'Arial Black', Arial, sans-serif;font-weight:bolder; color:black; padding: 0.2em 0;text-align: center;">INVOICE</h1>
+      </div>
+      <div class="float-parent-element" style="width: 50%;margin-top:-80x; ">
+      <div class="float-child-element" style="float: left;width: 60%; ">
+          <div class="red" style="background-color: white;margin-left: 0;width:430px">
+              <div style="margin-top: 10px;font-size:14px;font-weight: bold;">
+              Project Code &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; : &#160;&#160;<span t-field='o.project_code_id' style="font-size: 14px;"/></div>
+              <div style="font-size:15px;font-weight: bold;width:650px;">
+              Customer Name &#160; : &#160;&#160;<span t-field='o.ref_person' style="font-size: 14px"/></div>
+              <div style="font-size:15px;font-weight: bold;width:450px;">
+              Address&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;: &#160;&#160;<span t-field='o.project_code_id.name' style="font-size: 13px;"/>
+              </div>
+              <div style="font-size:15px;font-weight: bold;width:450px;">
+              Location&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;: &#160;&#160;<span t-field="o.partner_id.state_id" style="font-size: 13px;"/> 
+              <span t-field="o.partner_id.township_id" style="font-size: 13px;"/>
+              </div>
+          </div>
+      </div>
+      <div class="float-child-element" style="float: left;width: 40%; ">
+          <div class="yellow" style="background-color: white;margin-left: 99%;width:420px;">
+            <h5 style="margin-top: 10px;margin-bottom:20px;">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Invoice No. &#160;: <span t-field="o.seq_no"/></h5>
+            <div style="margin-top: -15px;font-size:14px;" >
+                <strong>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Invoiced Date&#160;&#160;&#160;&#160;&#160;&#160;&#160;: <span class="m-0" t-field="o.invoice_date"/></strong>
+            </div>
+          </div>
+      </div>
+      </div>
+    </div>
+    
+  <div class='page' >
+    <div class='hider'/>
+    <t t-set="display_discount" t-value="any(l.discount for l in o.invoice_line_ids)"/>
+
+    <table class="table table-sm o_main_table" name="invoice_line_table">
+        <thead>
+          <tr>
+            <th name="th_counter" class="text-center" stylescope="col">Sr.</th>
+            <th name="th_description" class="text-center" scope="col" >Description</th>
+            <th name="th_units" class="text-center" scope="col">Units</th>
+            <th name="th_uom" class="text-center" scope="col">UoM</th>
+            <th name="th_price" class="text-center" scope="col">Unit Price</th>
+            <th name="th_hours" class="text-center" scope="col">Hour Rate</th>
+            <th name="th_amount" class="text-center" scope="col">Amount</th>
+          </tr>
+        </thead>
+        <tbody class="invoice_tbody">
+            <t t-set="current_subtotal" t-value="0"/>
+            <t t-set="counter" t-value="0"/>
+            <t t-set="lines" t-value="o.invoice_line_ids.sorted(key=lambda l: (-l.sequence, l.date, l.move_name, -l.id), reverse=True)"/>
+            <t t-foreach="lines" t-as="line">
+                <t t-set="counter" t-value="counter + 1"/>
+                <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
+                <t t-set="current_subtotal" t-value="current_subtotal + line.price_total" groups="account.group_show_line_subtotals_tax_included"/>
+                <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.display_type == 'line_section' else 'font-italic o_line_note' if line.display_type == 'line_note' else ''">
+                    <t t-if="not line.display_type">
+                        <!--  Sr Number Table Data -->
+                        <td name="td_count" style='text-align:center;height:45px;'><span t-esc="counter"/></td>
+                        <!--  Description Table Data -->
+                        <td name="td_description" class="text-left" t-if="line.product_uom_id.name == 'LITER'" style="max-width: 250px;word-wrap: break-word;height:45px;">
+                          <span t-field="line.description"/>
+                        </td>
+                        <td t-else="" name="td_description" class="text-left" style="height:45px;">
+                          <span t-field="line.product_id.name"/>
+                        </td>
+                        <!--  Units Table Data -->
+                        <td name="td_qty" class="text-center" style='text-align:center;height:45px;'><span t-field="line.quantity"/></td>
+                        <!--  UoM Rate Table Data -->
+                        <td name="td_uom" class="text-center" style='text-align:center;height:45px;'><span t-field="line.product_uom_id"/></td>
+                        <!--  Unit Price Table Data -->
+                        <td t-if="line.product_uom_id.name == 'HOURS'" style='text-align:center;height:45px;'>
+                          <span t-esc="'{:,.2f}'.format(line.price_unit * 8)"/>
+                        </td>
+                        <td t-else="" style='text-align:center;height:45px;'>
+                          -
+                        </td>
+                        <!--  Hour Rate Table Data -->
+                        <td name="td_hours" class="text-center" style='text-align:center;height:45px;'><span t-field="line.price_unit"/></td>
+                        <!--  Amount Table Data -->
+                        <td name="td_subtotal" class="o_price_total"  style='text-align:right;height:45px;'>
+                            <span t-esc="'{:,.2f}'.format(float(str(line.price_total).split()[0]))" groups="account.group_show_line_subtotals_tax_excluded"/>
+                            <span t-field="line.price_total" groups="account.group_show_line_subtotals_tax_included"/>
+                            <span t-esc="'{:,.2f}'.format(float(str(line.price_total).split()[0]))" groups="account.group_show_line_subtotals_tax_included"/>
+                        </td>
+                    </t>
+                </tr>
+            </t>
+          <!--Free Blank Lines -->
+          <t t-if="counter &lt; 8">
+              <t t-set="val" t-value="8-counter"/>
+              <t t-foreach="range(val)" t-as="idx">
+                  <tr style="height:45px">
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                  </tr>
+              </t>
+          </t>
+          <!--The last total  lines -->
+          <tr>
+              <td colspan="5" class="blank-cell" style="border-bottom:1px solid white;border-left:1px solid white;"></td>
+              <td name="td_amount_untaxed_label" style="font-size:14px" class="text-right"><strong>Total</strong></td>
+              <td name="td_amount_untaxed" class="text-right" style="font-size:14px;text-align:right;">
+                  <span t-esc="'{:,.2f}'.format(float(str(o.amount_total).split()[0]))"/>
+              </td>
+          </tr>
+          <!--The last discount  lines -->
+          <tr>
+              <td colspan="5" class="blank-cell" style="border-bottom:1px solid white;border-left:1px solid white;"></td>
+              <td name="td_total_discount_label" style="font-size:14px" class="text-right"><strong>Discount</strong></td>
+              <td name="td_total_discount" class="text-right" style="font-size:14px;text-align:right;">
+                  <span t-esc="'{:,.2f}'.format(float(str(o.total_discount).split()[0]))"/>
+              </td>
+          </tr>
+           <!--The last advance  lines -->
+          <tr>
+              <td colspan="5" class="blank-cell" style="border-bottom:1px solid white;border-left:1px solid white;"></td>
+              <td name="td_advanced" style="font-size:14px" class="text-right"><strong>Advance</strong></td>
+              <td name="td_advanced" class="text-right" style="font-size:14px;text-align:right;" >
+                  <t t-set="adv" t-value="0.0"/>
+                  <t t-foreach="o.invoice_payments_widget.split('amount')[1:]" t-as="item">
+                      <t t-set="adv" t-value="adv + float(item.split(',')[0][3:])"/>
+                  </t>
+                  <span t-esc="'{:,.2f}'.format(adv)"/>                 
+              </td>
+          </tr>
+          <!--The last net total  lines -->
+          <tr>
+              <td colspan="5" class="blank-cell" style="border-bottom:1px solid white;border-left:1px solid white;"></td>
+              <td name="td_amount_net" style="font-size:14px" class="text-right"><strong>Net Total</strong></td>
+              <td name="td_amount_net" class="text-right" style="font-size:14px;text-align:right;">
+                  <span t-esc="'{:,.2f}'.format(float(str(o.amount_residual).split()[0]))"/>
+              </td>
+          </tr>        
+          
+        <!--something -->
+        <t t-foreach="o.amount_by_group" t-as="amount_by_group">
+            <tr style="">
+                <t t-if="amount_by_group[5] == 1 and doc.amount_untaxed == amount_by_group[2]">
+                    <td name="td_amount_by_group_label_3">
+                        <span t-esc="amount_by_group[0]"/>
+                        <span>&amp;nbsp;<span>on</span>&amp;nbsp;<t t-esc="amount_by_group[2]" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: doc.pricelist_id.currency_id}"/></span>
+                    </td>
+                    <td name="td_amount_by_group_3" class="text-right o_price_total">
+                        <span t-esc="amount_by_group[1]" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: doc.pricelist_id.currency_id}"/>
+                    </td>
+                </t>
+                <t t-else="">
+                    <td name="td_amount_by_group_label">
+                        <span t-esc="amount_by_group[0]"/>
+                    </td>
+                    <td name="td_amount_by_group" class="text-right o_price_total">
+                        <span t-esc="amount_by_group[1]" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: doc.pricelist_id.currency_id}"/>
+                    </td>
+                </t>
+            </tr>
+        </t>
+      </tbody>
+    </table>
+    <div style="margin-top:130px;margin-left:100px;">
+          <div style="width:160px;height:60px;margin-top:-10px;">
+              <strong style="padding-left:30px;margin-bottom:50px;">Prepared By</strong>
+              <div style="height:60px"/>
+              <div style="width:160px;height:3px;background-color:black;margin-bottom:20px;"/>
+              <div style="width:160px;height:3px;background-color:black;"/>
+          </div>
+          <div style="width:160px;margin-top:-60px;margin-left:220px;">
+              <strong style="padding-left:30px;margin-bottom:50px;">Checked By</strong>
+              <div style="height:60px"/>
+              <div style="width:160px;height:3px;background-color:black;margin-bottom:20px;"/>
+              <div style="width:160px;height:3px;background-color:black;"/>
+          </div>
+          <div style="width:160px;margin-top:-109px;margin-left:440px;">
+              <strong style="padding-left:30px;margin-bottom:50px;">Received By</strong>
+              <div style="height:60px"/>
+              <div style="width:160px;height:3px;background-color:black;margin-bottom:20px;"/>
+              <div style="width:160px;height:3px;background-color:black;"/>
+          </div>
+      
+    </div>
+         <!--footer -->
+        <div class="footer">
+            <div>
+              <p style="margin-left:750px;margin-top:25px">Page <span class="page"/>   of <span class="topage"/> </p> 
+            </div>
+        </div>
+        - CSS  to the html 
+        <style>
+        .hider{
+            width:100%;
+            height:80px;
+            backgroud-color:red;
+        }
+        table,td,th{
+            border: 1px solid #ddd;
+        }
+        .o_main_table td{
+            font-size:14px;
+            border: 1px solid black; /* Add border to table cells */
+            padding: 8px; /* Add padding to table cells */
+        }
+        .o_main_table th{
+            background-color : beige;
+            border: 1px solid black; /* Add border to table cells */
+            padding: 8px; /* Add padding to table cells */
+        }
+        .flexible-column {
+            overflow:hidden;
+            text-overflow:ellipsis;
+            width : 100px;
+        }
+        .o_main_table {
+            border-collapse: collapse; /* Collapse table borders */
+            width: 100%; /* Set table width to 100% */
+        }
+        .blank-cell{
+            border-left: 1px solid blue;
+            border-bottom: 1px solid blue;
+        }
+        </style>
+        
+    </div>
+  </div>
+</template>
