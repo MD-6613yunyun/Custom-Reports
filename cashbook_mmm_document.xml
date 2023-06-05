@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<template id="custom_external_layout">
+  <t t-set="o" t-value="o.with_context(lang=lang)"/>
+    <t t-set="name" t-value="'OFFICIAL RECEIPT'"/>
+    <t t-if="o.cash_type=='pay'" t-set="name" t-value="'PAYMENT VOUCHER'"/>
+    <div class='header'>
+      <h1 style="text-align:center;font-family: 'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif; font-size: 30px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 35px; ">MUDON MAUNG MAUNG</h1>
+      <h3 style="margin-left:55px;font-family: Cambria; font-size: 16px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 23px;">DePalYin Win Htauk U Myae Street, Industrial Zone (4) , Shwe Pyi Thar, Yangon</h3>
+      <h4 style="text-align:center;font-family: Calibri; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 23px;">Ph - 09-445713294, 09-775639740, 09-775639741</h4>
+      <div style="width: 100%;height: 6px;background-color: black;margin-top: 10px;margin-bottom:14px;"/>
+      <h2 style="text-align:center;font-size:24px;"><span t-esc="name"/></h2>
+        <div class="float-parent-element" style="width: 50%;margin-top:17px; ">
+          <div class="float-child-element" style="float: left;width: 40%; ">
+              <div class="red" style="background-color: white;margin-left: 0;width:430px">
+                  <h6 t-if="o.cash_type == 'pay' ">
+                    Received By : &#160;&#160;&#160;&#160; 
+                  </h6>
+                  <h6 t-else="">
+                    Received From : &#160;&#160;&#160;&#160; 
+                  </h6>
+                  <!--<p style="margin-left: 130px;margin-top:-5px;">Htoo Htoo San</p>-->
+                  <!--<p style="margin-left: 130px;margin-top:-17px;">Htoo Htoo San Car Part Shop</p>-->
+                  <!--<p style="margin-left: 130px;margin-top:-20px;">Industrial Zone, Pathein</p>-->
+              </div>
+          </div>
+          <div class="float-child-element" style="float: left;width: 60%; ">
+              <div class="yellow" style="background-color: white;margin-left: 99%;width:420px;">
+                    <h6 style="margin-top: 10px;margin-left:140px;">No. &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;: <span t-field="o.name"/></h6>
+                    <p style="font-size:14px;margin-left:20px;margin-left:140px;margin-top:-10px;">Date &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; : <span t-field="o.date"/></p>
+                    <p style="font-size:14px;margin-left:20px;margin-left:140px;margin-top:-20px;">Cash / Cheque &#160;: <span t-field="o.journal_id.type"/> </p>
+                    <p style="font-size:14px;margin-left:20px;margin-left:140px;margin-top:-20px;">Cashbook &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;: <span t-field="o.account_id"/></p>
+                    <p style="font-size:14px;margin-left:20px;margin-left:140px;margin-top:-20px;"><span t-field="o.currency_id"/> &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;: <span t-field="o.exchange_rate"/></p>
+              </div>
+          </div>
+        </div>
+    </div>
+    <div class='page'>
+    <div class='hider'/>
+
+    <table class="table table-sm o_main_table" name="invoice_line_table">
+      <!--In case we want to repeat the header, remove "display: table-row-group" -->
+      <thead style="display: table-row-group">
+        <tr>
+          <th name="th_counter" class="text-center" style="width: 8%;">No.</th>
+          <th name="th_code" class="text-center" style="width: 17%;">Acc. Code</th>
+          <th name="th_description" class="text-center" style="width: 19%;">Dept.</th>
+          <th name="th_quantity" class="text-center" style="width: 36%;">Description</th>
+          <th name="th_subtotal" class="text-center" style="width: 20%;">Total Amount</th>
+        </tr>
+      </thead>
+      <tbody class="invoice_tbody">
+        <t t-set="amount_total" t-value="0"/>
+        <t t-set="counter" t-value="0"/>
+        <t t-foreach="o.line_ids" t-as="line">
+            <t t-set="counter" t-value="counter + 1"/>
+            <t t-set="amount_total" t-value="amount_total + line.amount"/>
+            
+            <tr t-att-class="'bg-200 font-weight-bold o_line_section'" style="height:45px;">
+              <t>
+                <td name="td_count" style='text-align:center;'><span t-esc="counter"/></td>
+                <td name="td_name" style="text-align:center;"><span t-field="line.account_id.code"/></td>
+                <td name="td_name" style="text-align:center;"><span t-field="line.department_id"/></td>
+                <td name="td_name" style="max-width: 250px;word-wrap: break-word;"><span t-field="line.name"/></td>
+                <td name="td_subtotal" class="o_price_total"  style='text-align:right;'><span t-esc="str(line.amount)[:-1]" /></td>
+              </t>
+            </tr>
+        </t>
+        <!--Free Blank Lines -->
+        <t t-if="counter &lt; 5">
+            <t t-set="val" t-value="5-counter"/>
+            <t t-foreach="range(val)" t-as="idx">
+                <tr style="height:45px">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </t>
+        </t>
+        <!--The last subtotal  lines -->
+        <tr>
+            <td colspan="3" class="blank-cell" style="border-bottom:1px solid white;border-left:1px solid white;"></td>
+            <td name="td_amount_untaxed_label" style="font-size:14px;text-align:left;" ><strong>Subtotal</strong></td>
+            <td name="td_amount_untaxed" class="text-right" style="font-size:14px;text-align:right;">
+                <span t-esc="amount_total"/>
+            </td>
+        </tr>
+        <!--The last total  lines -->
+        <tr>
+            <td colspan="3" class="blank-cell" style="border-bottom:1px solid white;border-left:1px solid white;"></td>
+            <td name="td_amount_total_label" style="font-size:14px;text-align:left;" ><strong>Net Amount</strong></td>
+            <td name="td_amount_total" class="text-right" style="font-size:14px;text-align:right;" >
+                <span t-esc="amount_total"/>
+            </td>
+        </tr>
+        </tbody>
+        </table>
+        
+        <div style="margin-top:130px;margin-left:30px;">
+          <div style="width:160px;height:60px;margin-top:-10px;">
+              <div style="width:160px;height:3px;background-color:black;margin-bottom:20px;"/>
+              <strong style="padding-left:30px;margin-bottom:50px;">Received By</strong>
+              <p style="padding-left:30px;margin-top:-2px">(Sign, Name)</p>
+          </div>
+          <div style="width:160px;margin-top:-60px;margin-left:200px;">
+              <div style="width:160px;height:3px;background-color:black;margin-bottom:20px;"/>
+              <strong style="padding-left:30px;margin-bottom:50px;">Checked By</strong>
+              <p style="padding-left:30px;margin-top:-2px">(Sign, Name)</p>
+          </div>
+          <div style="width:160px;margin-top:-75px;margin-left:400px;">
+              <div style="width:160px;height:3px;background-color:black;margin-bottom:20px;"/>
+              <strong style="padding-left:30px;margin-bottom:50px;">Prepared By</strong>
+              <p style="padding-left:30px;margin-top:-2px">(Sign, Name)</p>
+          </div>
+            <div style="width:160px;margin-top:-76px;margin-left:600px;">
+              <div style="width:160px;height:3px;background-color:black;margin-bottom:20px;"/>
+              <strong style="padding-left:30px;margin-bottom:50px;">Approved By</strong>
+              <p style="padding-left:30px;margin-top:-2px">(Sign, Name)</p>
+          </div>
+        </div>
+         <!--footer -->
+        <div class="footer">
+            <div>
+              <p style="margin-left:750px;margin-top:25px">Page <span class="page"/>   of <span class="topage"/> </p> 
+            </div>
+        </div>
+        <!--- CSS  to the html -->
+        <style>
+        .hider{
+            width:100%;
+            height:150px;
+            backgroud-color:red;
+        }
+        table,td,th{
+            border: 1px solid #ddd;
+        }
+        .o_main_table td{
+            font-size:14px;
+            border: 1px solid black; /* Add border to table cells */
+            padding: 8px; /* Add padding to table cells */
+        }
+        .o_main_table th{
+            background-color : #BDC3C7;
+            border: 1px solid black; /* Add border to table cells */
+            padding: 8px; /* Add padding to table cells */
+        }
+        .flexible-column {
+            overflow:hidden;
+            text-overflow:ellipsis;
+            width : 100px;
+        }
+        .o_main_table {
+            border-collapse: collapse; /* Collapse table borders */
+            width: 100%; /* Set table width to 100% */
+        }
+        .blank-cell{
+            border-left: 1px solid blue;
+            border-bottom: 1px solid blue;
+        }
+        </style>
+    </div>
+</template>
